@@ -1,14 +1,17 @@
 site_name: RHCE 笔记
 site_author: ricolxwz
+site_url: https://rhce.ricolxwz.de/
 copyright: Copyright &copy; 2024 ricolxwz
 site_description: An RHCE study note
 repo_url: https://github.com/ricolxwz/rhce
 repo_name: ricolxwz/rhce
 theme:
   name: material
-  logo: assets/favicon-faded-8.svg
+  logo_light_mode: assets/favicon-d-212121-doc.svg
+  logo_dark_mode: assets/favicon-w-ffffff-doc.svg
   favicon: assets/favicon-white-background.svg
   language: zh
+  custom_dir: overrides
   features:
     - content.code.annotate
     - content.code.copy
@@ -34,14 +37,14 @@ theme:
         icon: material/brightness-auto
         name: Switch to light mode
     - media: "(prefers-color-scheme: light)"
-      scheme: default 
-      primary: indigo
+      scheme: light-mode
+      primary: white
       accent: indigo
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
-      scheme: slate
+      scheme: dark-mode
       primary: black
       accent: indigo
       toggle:
