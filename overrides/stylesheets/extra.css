@@ -21,8 +21,8 @@
 [data-md-color-scheme="slate"] {
   --md-footer-logo-dark-mode:         block;
   --md-footer-logo-light-mode:         none;
-  --md-primary-fg-color: rgba(18, 19, 23, 0.6);
-  --md-header-bg-color: rgba(18, 19, 23, 0.6);
+  --md-primary-fg-color: rgba(18, 19, 23, 0.8);
+  --md-header-bg-color: rgba(18, 19, 23, 0.8);
 }
 
 [data-md-color-primary="black"] .md-header {
