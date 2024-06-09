@@ -97,8 +97,8 @@ markdown_extensions:
   - footnotes
   - def_list
   - tables
-  - toc:
-      permalink: true
+  # - toc:
+  #     permalink: true
   - pymdownx.arithmatex:
       generic: true
   - pymdownx.highlight:
@@ -117,6 +117,7 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_code_format
 plugins:
   - search
+  - open-in-new-tab
 nav:
   - 开始:
     - index.md
