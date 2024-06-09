@@ -37,15 +37,14 @@ theme:
         icon: material/brightness-auto
         name: Switch to light mode
     - media: "(prefers-color-scheme: light)"
-      scheme: light-mode
+      scheme: default
       primary: white
       accent: indigo
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
-      scheme: dark-mode
-      primary: black
+      scheme: slate
       accent: indigo
       toggle:
         icon: material/brightness-4
