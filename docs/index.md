@@ -1,3 +1,3 @@
-# Welcome to MkDocs
+# 开始
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+欢迎来到RHCE笔记项目, 这是我个人考RHCE的笔记和心得, 欢迎在PR提出你的想法💡
