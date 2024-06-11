@@ -99,8 +99,8 @@ markdown_extensions:
   - footnotes
   - def_list
   - tables
-  - toc:
-      permalink: true
+  # - toc:
+  #     permalink: true
   - pymdownx.arithmatex:
       generic: true
   - pymdownx.highlight:
