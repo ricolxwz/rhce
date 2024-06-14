@@ -1,0 +1,1834 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="An RHCE study note">
+      
+      
+        <meta name="author" content="ricolxwz">
+      
+      
+        <link rel="canonical" href="https://rhce.ricolxwz.de/%E5%91%BD%E4%BB%A4%E8%A1%8C/%E6%9D%83%E9%99%90/">
+      
+      
+        <link rel="prev" href="../%E7%BB%88%E7%AB%AF/">
+      
+      
+        <link rel="next" href="../%E7%BD%91%E7%BB%9C/">
+      
+      
+      <link rel="icon" href="../../assets/favicon-white-background.svg">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.26">
+    
+    
+      
+        <title>权限 - RHCE 笔记</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6543a935.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+  
+  
+  
+  
+  <style>:root{--md-annotation-icon:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.17 2.76A10.1 10.1 0 0 1 12 2c1.31 0 2.61.26 3.83.76 1.21.5 2.31 1.24 3.24 2.17.93.93 1.67 2.03 2.17 3.24.5 1.22.76 2.52.76 3.83 0 2.65-1.05 5.2-2.93 7.07A9.974 9.974 0 0 1 12 22a10.1 10.1 0 0 1-3.83-.76 9.975 9.975 0 0 1-3.24-2.17A9.974 9.974 0 0 1 2 12c0-2.65 1.05-5.2 2.93-7.07.93-.93 2.03-1.67 3.24-2.17M12 17l1.56-3.42L17 12l-3.44-1.56L12 7l-1.57 3.44L7 12l3.43 1.58L12 17Z"/></svg>');}</style>
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0/dist/katex.min.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../assets/javascripts/glightbox.min.js"></script></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="RHCE 笔记" class="md-header__button md-logo" aria-label="RHCE 笔记" data-md-component="logo">
+      <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Logo -->
+<img id="logo_light_mode" src="../../assets/favicon-d-212121-doc.svg" alt="logo">
+<img id="logo_dark_mode" src="../../assets/favicon-w-ffffff-doc.svg" alt="logo">
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            RHCE 笔记
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              权限
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ricolxwz/rhce" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ricolxwz/rhce
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../.." class="md-tabs__link">
+          
+  
+    
+  
+  开始
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../%E7%BB%88%E7%AB%AF/" class="md-tabs__link">
+          
+  
+    
+  
+  命令行
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="RHCE 笔记" class="md-nav__button md-logo" aria-label="RHCE 笔记" data-md-component="logo">
+      <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Logo -->
+<img id="logo_light_mode" src="../../assets/favicon-d-212121-doc.svg" alt="logo">
+<img id="logo_dark_mode" src="../../assets/favicon-w-ffffff-doc.svg" alt="logo">
+    </a>
+    RHCE 笔记
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ricolxwz/rhce" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ricolxwz/rhce
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../.." class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    开始
+  </span>
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            开始
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    命令行
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            命令行
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%BB%88%E7%AB%AF/" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 19V7H4v12h16m0-16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16m-7 14v-2h5v2h-5m-3.42-4L5.57 9H8.4l3.3 3.3c.39.39.39 1.03 0 1.42L8.42 17H5.59l3.99-4Z"/></svg>
+  
+  <span class="md-ellipsis">
+    终端
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 18v4h-4v-3h-3v-3h-3l-2.26-2.26c-.55.17-1.13.26-1.74.26a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6c0 .61-.09 1.19-.26 1.74L22 18M7 5a2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0-2-2Z"/></svg>
+  
+  <span class="md-ellipsis">
+    权限
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 18v4h-4v-3h-3v-3h-3l-2.26-2.26c-.55.17-1.13.26-1.74.26a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6c0 .61-.09 1.19-.26 1.74L22 18M7 5a2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0-2-2Z"/></svg>
+  
+  <span class="md-ellipsis">
+    权限
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      命令一览
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="命令一览">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      用户管理
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      文件管理
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      安全模型
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="安全模型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dac" class="md-nav__link">
+    <span class="md-ellipsis">
+      DAC安全模型
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DAC安全模型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      用户管理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="用户管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      用户、组、口令信息
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="用户、组、口令信息">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#etcpasswd" class="md-nav__link">
+    <span class="md-ellipsis">
+      /etc/passwd
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etcgroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      /etc/group
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etcshadow" class="md-nav__link">
+    <span class="md-ellipsis">
+      /etc/shadow
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      文件管理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="文件管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      传统
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="传统">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      文件类型
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#访问权限控制组" class="md-nav__link">
+    <span class="md-ellipsis">
+      访问权限控制组
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#umask" class="md-nav__link">
+    <span class="md-ellipsis">
+      umask
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl" class="md-nav__link">
+    <span class="md-ellipsis">
+      ACL
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ACL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#acl_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      ACL是什么
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      为什么需要ACL
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#掩码" class="md-nav__link">
+    <span class="md-ellipsis">
+      掩码
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#默认条目" class="md-nav__link">
+    <span class="md-ellipsis">
+      默认条目
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%BD%91%E7%BB%9C/" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2m-5.15 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8.03 8.03 0 0 1-4.33 3.56M14.34 14H9.66c-.1-.66-.16-1.32-.16-2 0-.68.06-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2M12 19.96c-.83-1.2-1.5-2.53-1.91-3.96h3.82c-.41 1.43-1.08 2.76-1.91 3.96M8 8H5.08A7.923 7.923 0 0 1 9.4 4.44C8.8 5.55 8.35 6.75 8 8m-2.92 8H8c.35 1.25.8 2.45 1.4 3.56A8.008 8.008 0 0 1 5.08 16m-.82-2C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2M12 4.03c.83 1.2 1.5 2.54 1.91 3.97h-3.82c.41-1.43 1.08-2.77 1.91-3.97M18.92 8h-2.95a15.65 15.65 0 0 0-1.38-3.56c1.84.63 3.37 1.9 4.33 3.56M12 2C6.47 2 2 6.5 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2Z"/></svg>
+  
+  <span class="md-ellipsis">
+    网络
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      命令一览
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="命令一览">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      用户管理
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      文件管理
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      安全模型
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="安全模型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dac" class="md-nav__link">
+    <span class="md-ellipsis">
+      DAC安全模型
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DAC安全模型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      用户管理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="用户管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      用户、组、口令信息
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="用户、组、口令信息">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#etcpasswd" class="md-nav__link">
+    <span class="md-ellipsis">
+      /etc/passwd
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etcgroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      /etc/group
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etcshadow" class="md-nav__link">
+    <span class="md-ellipsis">
+      /etc/shadow
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      文件管理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="文件管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      传统
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="传统">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      文件类型
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#访问权限控制组" class="md-nav__link">
+    <span class="md-ellipsis">
+      访问权限控制组
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#umask" class="md-nav__link">
+    <span class="md-ellipsis">
+      umask
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl" class="md-nav__link">
+    <span class="md-ellipsis">
+      ACL
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ACL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#acl_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      ACL是什么
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      为什么需要ACL
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#掩码" class="md-nav__link">
+    <span class="md-ellipsis">
+      掩码
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#默认条目" class="md-nav__link">
+    <span class="md-ellipsis">
+      默认条目
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+  <h1>权限</h1>
+
+<h2 id="_1">命令一览<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h3 id="_2">用户管理<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:6"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><input id="__tabbed_1_5" name="__tabbed_1" type="radio" /><input id="__tabbed_1_6" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1"><code>useradd</code></label><label for="__tabbed_1_2"><code>userdel</code></label><label for="__tabbed_1_3"><code>usermod</code></label><label for="__tabbed_1_4"><code>groupadd</code></label><label for="__tabbed_1_5"><code>groupdel</code></label><label for="__tabbed_1_6"><code>groupmod</code></label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><strong>语法</strong>: </p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>useradd [-mMnr] [option1] [parameter1] [option2] [parameter2] [用户名]
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>useradd -D [option1] [parameter1] [option2] [parameter2]
+</code></pre></div></p>
+<p><strong><code>-D</code>参数说明</strong>: </p>
+<p><code>-D</code>表示变更预设值, 而不是新建用户.</p>
+<details class="example">
+<summary>例子</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>useradd -D # 显示当前useradd的默认设置
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo useradd -D -b /new/default/home/dir # 设置新用户默认主目录路径
+</code></pre></div>
+</details>
+<p><strong><code>[-mMnr]</code>参数说明:</strong></p>
+<ul>
+<li><code>-m</code>: 自动建立用户的登入目录</li>
+<li><code>-M</code>: 不要自动建立用户的登入目录</li>
+<li><code>-n</code>: 取消建立以用户名称为名的群组</li>
+<li><code>-r</code>: 建立系统账号</li>
+</ul>
+<p><strong><code>[options]</code>参数说明:</strong></p>
+<ul>
+<li><code>-c</code>: 备注, 会显示在备注栏中</li>
+<li><code>-d</code>: 用户登陆的起始目录</li>
+<li><code>-e</code>: 有效期限</li>
+<li><code>-f</code>: 密码过期后多少天即关闭账号</li>
+<li><code>-g</code>: 用户所在的群组</li>
+<li><code>-G</code>: 用户所属的附加群组</li>
+<li><code>-s</code>: 用户登陆后使用的shell</li>
+<li><code>-u</code>: 用户id</li>
+</ul>
+</div>
+<div class="tabbed-block">
+<p><strong>语法</strong>: </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>userdel [-r] [用户名]
+</code></pre></div>
+<p><strong><code>[-r]</code>参数说明:</strong></p>
+<p><code>-r</code>表示删除用户登入目录以及目录中的所有文件</p>
+</div>
+<div class="tabbed-block">
+<p><strong>语法</strong>: </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>usermod [-LU] [option1] [parameter1] [option2] [parameter2] [用户名]
+</code></pre></div>
+<p><strong><code>[-LU]</code>参数说明</strong>:</p>
+<ul>
+<li><code>-L</code>: 锁定用户密码, 使密码无效</li>
+<li><code>-U</code>: 解除密码锁定</li>
+</ul>
+<p><strong><code>[option]</code>参数说明</strong>: </p>
+<ul>
+<li><code>-c</code>: 备注, 会显示在备注栏中</li>
+<li><code>-d</code>: 用户登陆的起始目录</li>
+<li><code>-e</code>: 有效期限</li>
+<li><code>-f</code>: 密码过期后多少天即关闭账号</li>
+<li><code>-g</code>: 用户所在的群组</li>
+<li><code>-G</code>: 用户所属的附加群组</li>
+<li><code>-s</code>: 用户登陆后使用的shell</li>
+<li><code>-u</code>: 用户ID</li>
+</ul>
+</div>
+<div class="tabbed-block">
+<p><strong>语法:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>groupadd [-r] [-g [gid] -of] [-K] [组名]
+</code></pre></div>
+<p><strong><code>[-r]</code>参数说明:</strong></p>
+<p>创建系统工作组.</p>
+<p><strong><code>[-g [gid] -of]</code>参数说明:</strong></p>
+<ul>
+<li><code>-g</code>: 指定新增用户组的组ID</li>
+<li><code>-f</code>: 当指定的用户组ID已经存在时, 会自动选择另外一个唯一的组ID, 取代指定的组ID, 成功返回</li>
+<li>
+<p><code>-o</code>: 允许添加组ID号不唯一的工作组</p>
+<details class="example">
+<summary>例子</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sudo groupadd -g 1001 -o newgroup
+</code></pre></div>
+<p>表示创建一个名为<code>newgroup</code>的组, 并将其组ID设置为<code>1001</code>, 即使已经存在另一个组ID为<code>1001</code>的组</p>
+</details>
+</li>
+</ul>
+<p><strong><code>[-k]</code>参数说明</strong>: </p>
+<p>采用变量赋值的方式, 覆盖配置文件<code>/etc/login.defs</code>, 如<code>-K [key1] = [value1], -k [key2] = [value2]</code></p>
+</div>
+<div class="tabbed-block">
+<p><strong>语法:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>groupdel [组名]
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p><strong>语法:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>groupmod [-g [gid] -o] [-n [新组名]] [组名]
+</code></pre></div>
+<p><strong><code>[-g [gid] -o]</code>参数说明:</strong></p>
+<ul>
+<li><code>-g</code>: 指定新增用户组的组ID</li>
+<li><code>-o</code>: 允许改为组ID号不唯一的工作组</li>
+</ul>
+<p><strong><code>[-n [新组名]]</code>参数说明:</strong></p>
+<p>设置想要使用的群组名称.</p>
+</div>
+</div>
+</div>
+<h3 id="_3">文件管理<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:5"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><input id="__tabbed_2_4" name="__tabbed_2" type="radio" /><input id="__tabbed_2_5" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1"><code>chmod</code></label><label for="__tabbed_2_2"><code>chown</code></label><label for="__tabbed_2_3"><code>chgrp</code></label><label for="__tabbed_2_4"><code>getfacl</code></label><label for="__tabbed_2_5"><code>setfacl</code></label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><strong>语法</strong>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>chmod [-cfvR] mode file
+</code></pre></div>
+<p><strong><code>mode</code>参数说明</strong>:</p>
+<p>用于权限设定字串, 格式如下: </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>[ugoa...][[+-=][rwx]...]
+</code></pre></div>
+<p>其中: </p>
+<ul>
+<li><code>u</code>表示该文件的拥有者, <code>g</code>表示与该文件的拥有者属于同一个组的用户, <code>o</code>表示其他的用户, <code>a</code>表示三者皆是</li>
+<li><code>+</code>表示增加权限, <code>-</code>表示取消权限, <code>=</code>表示唯一设定权限</li>
+<li><code>r</code>, <code>w</code>, <code>x</code>详情见<a href="#访问权限控制组">下方</a></li>
+</ul>
+<p><strong><code>[-cvfR]</code>参数说明:</strong></p>
+<ul>
+<li><code>-c</code>: 显示权限并更的资料</li>
+<li><code>-f</code>: 若该文件权限无法更改, 不要显示错误信息</li>
+<li><code>-v</code>: 显示权限并更的详细资料</li>
+<li><code>-R</code>: 以递归的方式变更</li>
+</ul>
+</div>
+<div class="tabbed-block">
+<p><strong>语法</strong>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>chown [options] [owner][:[group]] file
+</code></pre></div>
+<p><strong><code>[options]</code>参数说明</strong>: </p>
+<ul>
+<li><code>-h</code>: 只会影响链接本身, 不会影响链接所链接的文件</li>
+<li><code>-R</code>: 递归地改变文件夹下所有文件的属主</li>
+</ul>
+<p><strong><code>[owner][:[group]]</code>参数说明</strong>:</p>
+<ul>
+<li><code>[user]</code>: <code>[user]</code>变成了该文件的属主</li>
+<li><code>[user]:</code>: <code>[user]</code>变成了该文件的属主, <code>[user]</code>的登陆组变成了文件的属组</li>
+<li><code>[user]:[group]</code>: <code>[user]</code>变成了文件的属主, <code>[group]</code>变成了文件的属组</li>
+<li><code>:[group]</code>: <code>[group]</code>变成了文件的属组</li>
+<li><code>:</code>: 不会发生任何变化</li>
+</ul>
+</div>
+<div class="tabbed-block">
+<p><strong>语法</strong>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>chgrp [options] [group] file
+</code></pre></div>
+<p><strong><code>[options]</code>参数说明</strong>:</p>
+<ul>
+<li><code>-h</code>: 只会影响链接本身, 不会影响链接所链接的文件</li>
+<li><code>-R</code>: 递归地改变文件夹下所有文件的属组</li>
+</ul>
+</div>
+<div class="tabbed-block">
+<p><strong>语法</strong>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>getfacl [options] [filename]
+</code></pre></div>
+<p><strong>输出</strong>: </p>
+<table>
+<thead>
+<tr>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user</code>/<code>group</code>/<code>other</code>/<code>mask</code>/<code>default</code></td>
+<td><code>[user_name]</code>/<code>[group_name]</code>/<code>[none]</code></td>
+<td><code>[permission]</code></td>
+</tr>
+</tbody>
+</table>
+<details class="example" open="open">
+<summary>例子</summary>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">例子1</label><label for="__tabbed_3_2">例子2</label><label for="__tabbed_3_3">例子3</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>输入:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>getfacl /var/log/dpkg.log
+</code></pre></div>
+<p>输出: </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a># file: dpkg.log
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a># owner: root
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a># group: root
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>user::rw-
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>group::r--
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>other::r--
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>输入: </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>getfacl file
+</code></pre></div>
+<p>输出: </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a># file: file
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a># owner: root
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a># group: root
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>user::rw-
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>user:wenzexu:rwx                #effective:r--
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>group::r--
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>mask::r--
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>other::r--
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>输入:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>getfacl dir
+</code></pre></div>
+<p>输出:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a># file: dir
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a># owner: root
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a># group: root
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>user::rwx
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>group::r-x
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>other::r-x
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>default:user::rwx
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>default:user:wenzexu:rwx
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>default:group::r-x
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>default:mask::rwx
+<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>default:other::r-x
+</code></pre></div>
+</div>
+</div>
+</div>
+</details>
+</div>
+<div class="tabbed-block">
+<p><strong>语法</strong>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>setfacl [options1] [options2] [parameter] [filename]
+</code></pre></div>
+<p><strong><code>[parameter]</code>参数说明</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>u</code>/<code>g</code>/<code>o</code>/<code>m</code></td>
+<td><code>[user_name]</code>/<code>[group_name]</code>/<code>[none]</code></td>
+<td><code>[permission]</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><code>u</code>: 作用对象为用户</li>
+<li><code>g</code>: 作用对象为组</li>
+<li><code>o</code>: 作用对象为其他人</li>
+<li><code>m</code>: 作用对象为<a href="#掩码">掩码</a></li>
+</ul>
+<p><strong><code>[options1]</code>参数说明</strong>: </p>
+<ul>
+<li><code>-b</code>: 移除所有的ACL条目, 只保留传统的文件权限</li>
+<li><code>-k</code>: 移除默认的ACL条目, 影响将来创建的文件和子目录(仅用于目录)</li>
+<li><code>-n</code>: 在修改权限时, 不会自动调整<a href="#掩码">掩码</a></li>
+<li><code>-R</code>: 递归地设置ACL, 立即影响当前目录以及所有子目录和文件(仅用于目录)</li>
+<li><code>-d</code>: 设置<a href="#默认条目">默认ACL条目</a>, 影响将来新创建的文件和子目录(仅用于目录)</li>
+<li><code>-L</code>: 会遵循符号链接并对链接的目标文件/文件夹应用ACL条目</li>
+<li><code>-P</code>: 设置不会遵循符号链接, 只会对符号链接本身应用ACL条目</li>
+</ul>
+<p><strong><code>[options2]</code>参数说明</strong>: </p>
+<ul>
+<li><code>-m</code>: 添加或者修改特定权限</li>
+<li><code>-M</code>: 从指定文件中读取ACL条目并应用到目标文件或者目录</li>
+<li><code>-x</code>: 移除指定的ACL条目</li>
+<li><code>-X</code>: 从指定文件中读取ACL条目并应用到目标文件或者目录</li>
+</ul>
+<details class="example" open="open">
+<summary>例子</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>setfacl -m u:john:rw file.txt # 修改john的权限
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>setfacl -d -m g:staff:r example_dir # 修改staff组在example_dir的默认权限
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>setfacl -m m::r filename # 修改文件的掩码为只读
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>setfacl -n -m u:wenzexu:rw- filename # 若原来的掩码是r--, 则修改后还是r--, 不会自动更新
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>setfacl -R -m u:wenzexu:rwx dir # 将操作应用到目录及其所有的子文件夹上
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>setfacl -M acl_entries.txt file # 从acl_entries.txt中读取ACL条目并应用到file
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>setfacl -x u:wenzexu file # 移除ACL条目
+<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a>setfacl -X acl_entries.txt file # 从acl_entries.txt中读取ACL条目并从file中移除这些条目
+<a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a>setfacl -L -m u:wenzexu:rwx symlink # 对符号链接symlink链接的文件应用ACL条目
+<a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a>setfacl -P -m u:wenzexu:rwx symlink # 对符号链接symlink本身应用ACL条目
+</code></pre></div>
+</details>
+</div>
+</div>
+</div>
+<h2 id="_4">安全模型<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p>Linux系统上最初的安全模型为DAC, Discretionary Access Control. 后来又增加了一个新的安全模型为MAC, Mandatory Access Control. </p>
+<p>DAC和MAC不是互斥的, DAC是最基本的安全模型, 是我们最常用到的访问控制机制, 而MAC是构建在DAC之上的可选的加强安全机制. 访问前, Linux系统通常都是先做DAC检查, 如果没有通过则操作直接失败; 如果通过DAC检查并且系统支持MAC模块, 再做MAC权限检查.</p>
+<p>为了区分两者, 我们将支持MAC的Linux系统称为SELinux, 表示它是针对Linux的安全加强系统. </p>
+<h3 id="dac">DAC安全模型<a class="headerlink" href="#dac" title="Permanent link">&para;</a></h3>
+<h4 id="_5">用户管理<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h4>
+<p>DAC安全模型的核心内容是: 进程理论上所拥有的权限和执行它的用户的权限相同. </p>
+<h5 id="_6">用户、组、口令信息<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h5>
+<p>通过<code>/etc/passwd</code>和<code>/etc/group</code>保存用户和组信息, 通过<code>/etc/shadow</code>保存密码口令及其变动信息, 每行一条记录. </p>
+<p>用户和组分别用UID和GID表示, 一个用户可以同时属于多个组, 默认每个用户必须属于一个与之UID同值的GID. </p>
+<h6 id="etcpasswd"><code>/etc/passwd</code><a class="headerlink" href="#etcpasswd" title="Permanent link">&para;</a></h6>
+<table>
+<thead>
+<tr>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>用户名</td>
+<td>口令</td>
+<td>UID</td>
+<td>GID</td>
+<td>注释</td>
+<td>用户目录</td>
+<td>默认shell</td>
+</tr>
+</tbody>
+</table>
+<h6 id="etcgroup"><code>/etc/group</code><a class="headerlink" href="#etcgroup" title="Permanent link">&para;</a></h6>
+<table>
+<thead>
+<tr>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>组名</td>
+<td>口令</td>
+<td>GID</td>
+<td>组成员用户列表</td>
+</tr>
+</tbody>
+</table>
+<h6 id="etcshadow"><code>/etc/shadow</code><a class="headerlink" href="#etcshadow" title="Permanent link">&para;</a></h6>
+<table>
+<thead>
+<tr>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>登录名</td>
+<td>最后一次修改时间</td>
+<td>最小时间间隔</td>
+<td>最大时间间隔</td>
+<td>警告时间</td>
+<td>不活动时间</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_7">文件管理<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h4>
+<h5 id="_8">传统<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h5>
+<h6 id="_9">文件类型<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h6>
+<ul>
+<li>普通文件(<code>-</code>), 包括文本文件和二进制文件, 可以用<code>touch</code>创建</li>
+<li>目录文件(<code>d</code>)</li>
+<li><a href="https://zh.wikipedia.org/zh-hans/%E7%B6%B2%E8%B7%AF%E6%8F%92%E5%BA%A7">套接字文件</a>(<code>s</code>), 用于进程间通信(可以跨网络), 一般由应用程序在执行中间创建</li>
+<li><a href="https://blog.csdn.net/shui2104/article/details/121954184">管道文件</a>(<code>p</code>), 也用于进程之间的通信, 一般分为无名管道(有亲缘关系的进程通信)和有名管道(无亲缘关系的进程通信), 可以用<code>mkfifo</code>创建</li>
+<li>字符文件(<code>c</code>)和块文件(<code>b</code>), 均为设备文件, 可以用<code>mknod</code>创建</li>
+<li>链接文件(<code>l</code>), 是软链接文件, 而不是硬连接文件</li>
+</ul>
+<h6 id="访问权限控制组">访问权限控制组<a class="headerlink" href="#访问权限控制组" title="Permanent link">&para;</a></h6>
+<p>分为三组进行控制: user包含对文件属主设定的权限, group包含对文件属组设定的权限, others包含对其他者设定的权限. 可设定的权限为: </p>
+<ul>
+<li><code>r</code>: 表示具有读权限</li>
+<li><code>w</code>: 表示具有写权限</li>
+<li><code>x</code>: 表示具有执行/搜索权限, 一般针对可执行文件/目录</li>
+<li><code>s</code>: 表示用户在执行该文件时, 将临时拥有属主/属组的权限, 一般针对可执行文件/目录</li>
+<li><code>t</code>: 表示只有目录的所有者才能删除或者重命名该目录下的文件, 一般针对目录</li>
+</ul>
+<p>此外, 权限还可以用个数字来表示, 这些数字表示每种权限的组合, 每个权限都有对应的数值:</p>
+<ul>
+<li><code>r</code>: 4</li>
+<li><code>w</code>: 2</li>
+<li><code>x</code>: 1</li>
+<li><code>s</code>: 4</li>
+<li><code>t</code>: 1</li>
+</ul>
+<p>数字结构通常分为4部分:</p>
+<ol>
+<li>特殊权限位<ul>
+<li>属主<code>s</code>(SUID): 4</li>
+<li>属组<code>s</code>(SGID): 2</li>
+<li><code>t</code>(SBIT): 1</li>
+</ul>
+</li>
+<li>所有者权限位</li>
+<li>所属组权限位</li>
+<li>其他用户权限位</li>
+</ol>
+<details class="example">
+<summary>例子</summary>
+<ol>
+<li>组合<code>rwxrwxrwt</code>: <ul>
+<li>特殊权限: <code>t</code> = 1</li>
+<li>所有者权限: <code>rwx</code> = 7</li>
+<li>组权限: <code>rwx</code> = 7</li>
+<li>其他用户权限: <code>rwt</code> = 7
+所以可以表示为1777</li>
+</ul>
+</li>
+<li>组合<code>rwsr-xr-x</code>: <ul>
+<li>特殊权限: 属主<code>s</code> = 4</li>
+<li>所有者权限: <code>rws</code> = 7</li>
+<li>组权限: <code>r-x</code> = 5</li>
+<li>其他用户权限: <code>r-x</code> = 5
+所以可以表示为4755</li>
+</ul>
+</li>
+<li>组合<code>rwsrwsr-t</code>: <ul>
+<li>特殊权限: 属主<code>s</code> + 属组<code>s</code> + <code>t</code> = 7</li>
+<li>所有者权限: <code>rws</code> = 7</li>
+<li>组权限: <code>rws</code> = 7</li>
+<li>其他用户权限: <code>r-t</code> = 5
+所以可以表示为7775</li>
+</ul>
+</li>
+</ol>
+</details>
+<h6 id="umask"><code>umask</code><a class="headerlink" href="#umask" title="Permanent link">&para;</a></h6>
+<p>当创建一个文件的时候, <code>umask</code>命令控制着文件的默认权限. </p>
+<details class="tip" open="open">
+<summary>Tip</summary>
+<p>我们可以通过<code>umask</code>命令查看默认值</p>
+</details>
+<p>Ubuntu默认的umask时<code>0022</code>, 二进制表示为<code>000 000 010 010</code>, 当我们创建文件或者目录的时候, 如果没有umask, 也就是umask为<code>0000</code>的时候, 文件或者目录的权限是<code>rw-rw-rw-</code>, 这个权限被称为原始权限, 二进制表示为<code>000 110 110 110</code>(前3个<code>0</code>为特殊权限位). 当umask为<code>0022</code>的时候, 这个时候在原始权限的基础上去掉umask为<code>1</code>上的权限, 去掉后就变成了<code>000 110 100 100</code>, 也就是<code>-rw-r--r--</code>.</p>
+<h5 id="acl">ACL<a class="headerlink" href="#acl" title="Permanent link">&para;</a></h5>
+<h6 id="acl_1">ACL是什么<a class="headerlink" href="#acl_1" title="Permanent link">&para;</a></h6>
+<p>访问控制列表(Access Control List, ACL)是由一条或者多条规则组成的集合, 它在各种系统和应用中都有广泛的应用, 通过灵活使用ACL, 可以实现细粒度的访问控制, 比如说:</p>
+<ol>
+<li>文件系统: 最常见的ACL应用场景</li>
+<li>网络设备: 在路由器或者交换机中, ACL用于控制流量如定义允许或者拒绝特定IP地址或网络段的访问规则</li>
+<li>数据库系统: 用于管理用户对数据库对象的访问权限</li>
+<li>Web: 控制用户对特定API端点的访问权限</li>
+<li>云计算和虚拟环境: 用于控制对虚拟机, 存储资源和网络资源的访问权限</li>
+<li>VCS: 用于控制用户对代码库的访问权限</li>
+<li>...</li>
+</ol>
+<h6 id="acl_2">为什么需要ACL<a class="headerlink" href="#acl_2" title="Permanent link">&para;</a></h6>
+<ol>
+<li>更细粒度的控制: 可以为不同的用户和组设置不同的权限</li>
+<li>继承: 目录的ACL可以配置为自动应用到新创建的文件和子目录</li>
+</ol>
+<h6 id="掩码">掩码<a class="headerlink" href="#掩码" title="Permanent link">&para;</a></h6>
+<p>掩码(mask)在ACL中是一个重要的概念, 用于设置文件或者目录的最大权限.</p>
+<details class="tip" open="open">
+<summary>Tip</summary>
+<ol>
+<li>对当前文件/目录执行<code>setfacl -m m::r filename</code>之后, 所有在影响范围内的条目的最高权限是<code>r--</code>.</li>
+<li>当对一个条目授予高于掩码的权限时, 掩码会自动更新, 如原来掩码是<code>r--</code>, 执行<code>setfacl -m u:wenzexu:rwx filename</code>之后, 掩码会变成<code>rwx</code>; 如果低于或者等于, 掩码保持不变. 如果你想避免掩码自动更新, 在修改该条目时, 加入<code>-n</code>选项. </li>
+<li>当你添加第一个条目的时候, 掩码会被自动创建, 掩码的权限为当前影响范围内条目中的最高权限. 同样的如果这个条目有<code>-n</code>选项, 那么应该是影响范围中不包括当前条目的最高权限.</li>
+</ol>
+</details>
+<p>掩码的执行对象: <code>[none]</code>, 设置掩码的时候, 中间那位可以省略, 如<code>setfacl -m u:r-- filename</code>.</p>
+<p>掩码的影响范围: </p>
+<ul>
+<li>所有非文件所有者的用户条目</li>
+<li>所有组条目和默认条目</li>
+</ul>
+<p>当使用<code>setfacl</code>命令添加第一个条目后, 掩码默认会自动创建, 默认最大权限为<code>rwx</code>.</p>
+<h6 id="默认条目">默认条目<a class="headerlink" href="#默认条目" title="Permanent link">&para;</a></h6>
+<p>默认条目定义了对新创建的文件或者子目录应用的默认ACL权限. 这只能作用于文件夹. 默认条目里面也有默认用户条目, 默认组条目, 默认掩码, 默认其他权限. 默认条目的存在可以确保新创建的文件或者子目录继承了所在目录的权限规则, 从而确保了一致性和安全性.</p>
+<details class="example" open="open">
+<summary>例子</summary>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">例子1</label><label for="__tabbed_4_2">例子2</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>输入:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>setfacl -nd -m u:wenzexu:rwx dir_do_not_update_mask
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>getfacl dir_do_not_update_mask
+</code></pre></div>
+<p>输出: </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a># file: dir_do_not_update_mask/
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a># owner: root
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a># group: root
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>user::rwx
+<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>group::r-x
+<a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>other::r-x
+<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>default:user::rwx
+<a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>default:user:wenzexu:rwx        #effective:r-x
+<a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>default:group::r-x
+<a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a>default:mask::r-x
+<a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a>default:other::r-x
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>输入: </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>setfacl -d -m u:wenzexu:rwx dir
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>getfacl dir
+</code></pre></div>
+<p>输出: </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a># file: dir
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a># owner: root
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a># group: root
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>user::rwx
+<a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a>group::r-x
+<a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a>other::r-x
+<a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a>default:user::rwx
+<a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a>default:user:wenzexu:rwx
+<a id="__codelineno-25-9" name="__codelineno-25-9" href="#__codelineno-25-9"></a>default:group::r-x
+<a id="__codelineno-25-10" name="__codelineno-25-10" href="#__codelineno-25-10"></a>default:mask::rwx
+<a id="__codelineno-25-11" name="__codelineno-25-11" href="#__codelineno-25-11"></a>default:other::r-x
+</code></pre></div>
+</div>
+</div>
+</div>
+</details>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>"262588213843476". (n.d.). Linux权限控制的基本原理. Gist. Retrieved June 9, 2024, from <a href="https://gist.github.com/baymaxium/45ad3b68bcd392c3c3feebf935f1618f">https://gist.github.com/baymaxium/45ad3b68bcd392c3c3feebf935f1618f</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Linux chmod 命令 | 菜鸟教程. (n.d.). Retrieved June 11, 2024, from <a href="https://www.runoob.com/linux/linux-comm-chmod.html">https://www.runoob.com/linux/linux-comm-chmod.html</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>Linux ACL （访问控制列表）权限管理举例详解（含默认权限）_linux访问控制列表应用案例-CSDN博客. (n.d.). Retrieved June 11, 2024, from <a href="https://blog.csdn.net/Zheng__Huang/article/details/107743768">https://blog.csdn.net/Zheng__Huang/article/details/107743768</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p>【Linux】解密ACL（文件访问控制列表）的神奇力量_linux acl-CSDN博客. (n.d.). Retrieved June 12, 2024, from <a href="https://blog.csdn.net/m0_60511809/article/details/132230996">https://blog.csdn.net/m0_60511809/article/details/132230996</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p>Chown Command in Linux (File Ownership). (2018, December 4). <a href="https://linuxize.com/post/linux-chown-command/">https://linuxize.com/post/linux-chown-command/</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p>useradd命令_Linux useradd 命令用法详解：创建的新的系统用户. (n.d.). Retrieved June 12, 2024, from <a href="https://man.niaoge.com/useradd">https://man.niaoge.com/useradd</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7">
+<p>Linux userdel命令 | 菜鸟教程. (n.d.). Retrieved June 12, 2024, from <a href="https://www.runoob.com/linux/linux-comm-userdel.html">https://www.runoob.com/linux/linux-comm-userdel.html</a>&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:8">
+<p>Linux usermod命令 | 菜鸟教程. (n.d.). Retrieved June 12, 2024, from <a href="https://www.runoob.com/linux/linux-comm-usermod.html">https://www.runoob.com/linux/linux-comm-usermod.html</a>&#160;<a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9">
+<p>Linux groupadd 命令 | 菜鸟教程. (n.d.). Retrieved June 12, 2024, from <a href="https://www.runoob.com/linux/linux-comm-groupadd.html">https://www.runoob.com/linux/linux-comm-groupadd.html</a>&#160;<a class="footnote-backref" href="#fnref:9" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+<li id="fn:10">
+<p>Linux groupdel命令 | 菜鸟教程. (n.d.). Retrieved June 12, 2024, from <a href="https://www.runoob.com/linux/linux-comm-groupdel.html">https://www.runoob.com/linux/linux-comm-groupdel.html</a>&#160;<a class="footnote-backref" href="#fnref:10" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+<li id="fn:11">
+<p>Linux groupmod命令 | 菜鸟教程. (n.d.). Retrieved June 12, 2024, from <a href="https://www.runoob.com/linux/linux-comm-groupmod.html">https://www.runoob.com/linux/linux-comm-groupmod.html</a>&#160;<a class="footnote-backref" href="#fnref:11" title="Jump back to footnote 11 in the text">&#8617;</a></p>
+</li>
+<li id="fn:12">
+<p>Linux 权限管理. (n.d.). 知乎专栏. Retrieved June 12, 2024, from <a href="https://zhuanlan.zhihu.com/p/61196860">https://zhuanlan.zhihu.com/p/61196860</a>&#160;<a class="footnote-backref" href="#fnref:12" title="Jump back to footnote 12 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+  <h2 id="__comments">评论</h2>
+  <script src="https://giscus.app/client.js"
+        data-repo="ricolxwz/rhce"
+        data-repo-id="R_kgDOMGqTfw"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOMGqTf84CgBTS"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+</script>
+
+  <!-- Synchronize Giscus theme with palette -->
+  <script>
+    var giscus = document.querySelector("script[src*=giscus]")
+
+    // Set palette on initial load
+    var palette = __md_get("__palette")
+    if (palette && typeof palette.color === "object") {
+      var theme = palette.color.scheme === "slate"
+        ? "transparent_dark"
+        : "light"
+
+      // Instruct Giscus to set theme
+      giscus.setAttribute("data-theme", theme) 
+    }
+
+    // Register event handlers after documented loaded
+    document.addEventListener("DOMContentLoaded", function() {
+      var ref = document.querySelector("[data-md-component=palette]")
+      ref.addEventListener("change", function() {
+        var palette = __md_get("__palette")
+        if (palette && typeof palette.color === "object") {
+          var theme = palette.color.scheme === "slate"
+            ? "transparent_dark"
+            : "light"
+
+          // Instruct Giscus to change theme
+          var frame = document.querySelector(".giscus-frame")
+          frame.contentWindow.postMessage(
+            { giscus: { setConfig: { theme } } },
+            "https://giscus.app"
+          )
+        }
+      })
+    })
+  </script>
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2024 ricolxwz
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/ricolxwz" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://gitlab.com/ricolxwz" target="_blank" rel="noopener" title="gitlab.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="m503.5 204.6-.7-1.8-69.7-181.78c-1.4-3.57-3.9-6.59-7.2-8.64-2.4-1.55-5.1-2.515-8-2.81-2.9-.295-5.7.083-8.4 1.11-2.7 1.02-5.1 2.66-7.1 4.78-1.9 2.12-3.3 4.67-4.1 7.44l-47 144H160.8l-47.1-144c-.8-2.77-2.2-5.31-4.1-7.43-2-2.12-4.4-3.75-7.1-4.77a18.1 18.1 0 0 0-8.38-1.113 18.4 18.4 0 0 0-8.04 2.793 18.09 18.09 0 0 0-7.16 8.64L9.267 202.8l-.724 1.8a129.57 129.57 0 0 0-3.52 82c7.747 26.9 24.047 50.7 46.447 67.6l.27.2.59.4 105.97 79.5 52.6 39.7 32 24.2c3.7 1.9 8.3 4.3 13 4.3 4.7 0 9.3-2.4 13-4.3l32-24.2 52.6-39.7 106.7-79.9.3-.3c22.4-16.9 38.7-40.6 45.6-67.5 8.6-27 7.4-55.8-2.6-82z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://hub.docker.com/u/ricolxwz" target="_blank" rel="noopener" title="hub.docker.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M349.9 236.3h-66.1v-59.4h66.1v59.4zm0-204.3h-66.1v60.7h66.1V32zm78.2 144.8H362v59.4h66.1v-59.4zm-156.3-72.1h-66.1v60.1h66.1v-60.1zm78.1 0h-66.1v60.1h66.1v-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm-78.1-72.1h-66.1v60.1h66.1v-60.1z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate", "content.code.copy", "content.code.select", "content.tabs.link", "content.footnote.tooltips", "content.tooltips", "navigation.tabs", "navitation.sections", "navigation.expand", "navigation.indexes", "search.suggest", "search.highlight", "search.share", "navigation.tracking"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.ad660dcc.min.js"></script>
+      
+        <script src="../../javascripts/katex.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/contrib/auto-render.min.js"></script>
+      
+        <script src="../../js/open_in_new_tab.js"></script>
+      
+    
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
+</html>
